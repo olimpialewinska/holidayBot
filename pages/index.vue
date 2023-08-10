@@ -1,0 +1,86 @@
+<template>
+  <div
+    class="relative flex flex-wrap items-center"
+    style="height: calc(100vh - 60px)"
+  >
+    <div
+      class="w-full p-6 m-auto dark:bg-gray-700 bg-white border-t-4 border-teal-500 dark:border-teal-800 rounded-md shadow-md border-top lg:max-w-md"
+    >
+      <div class="flex justify-center mb-4">
+        <nuxt-picture
+          v-if="logoSrc"
+          :src="logoSrc"
+          height="42"
+          width="200"
+          fit="cover"
+          alt="Logo"
+        />
+      </div>
+      <form class="mt-6">
+        <div>
+          <label
+            for="email"
+            class="block text-sm dark:text-gray-300 text-gray-800"
+            >Email</label
+          >
+          <input
+            type="email"
+            class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md focus:border-teal-400 focus:ring-teal-300 focus:outline-none focus:ring focus:ring-opacity-40"
+          />
+        </div>
+        <div class="mt-4">
+          <div>
+            <label
+              for="password"
+              class="block text-sm dark:text-gray-300 text-gray-800"
+              >Password</label
+            >
+            <input
+              type="password"
+              class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md focus:border-teal-400 focus:ring-teal-300 focus:outline-none focus:ring focus:ring-opacity-40"
+            />
+          </div>
+          <div class="mt-6">
+            <button
+              class="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-teal-500 dark:bg-teal-700 rounded-md hover:bg-teal-600 focus:outline-none focus:bg-teal-800"
+            >
+              Login
+            </button>
+          </div>
+        </div>
+      </form>
+      <div class="flex items-center justify-center mt-8">
+        <div
+          class="text-xs font-light dark:text-gray-300 text-gray-700"
+          style="margin-right: 4px"
+        >
+          Don't have an account?
+        </div>
+        <NuxtLink to="/register">
+          <div class="text-xs font-medium text-teal-600 hover:underline">
+            Register
+          </div>
+        </NuxtLink>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+const colorMode = useColorMode();
+const logoSrc = ref(null);
+
+onMounted(() => {
+  updateLogoSrc();
+});
+
+watch(colorMode, () => {
+  updateLogoSrc();
+});
+
+function updateLogoSrc() {
+  logoSrc.value = colorMode.value === "dark" ? "/hb-dark.png" : "/hb-light.png";
+}
+</script>
+
+<script></script>
