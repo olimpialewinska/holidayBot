@@ -4,7 +4,7 @@
     style="height: calc(100vh - 60px)"
   >
     <div
-      class="w-full p-6 m-auto dark:bg-gray-700 bg-white border-t-4 border-teal-500 dark:border-teal-800 rounded-md shadow-md border-top lg:max-w-md"
+      class="w-11/12 p-6 m-auto dark:bg-zinc-800 bg-white border-t-4 border-teal-500 dark:border-teal-800 rounded-md shadow-md border-top sm:max-w-md"
     >
       <div class="flex justify-center mb-4">
         <nuxt-picture
@@ -42,7 +42,7 @@
           </div>
           <div class="mt-6">
             <button
-              class="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-teal-500 dark:bg-teal-700 rounded-md hover:bg-teal-600 focus:outline-none focus:bg-teal-800"
+              class="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-teal-500 hover:bg-teal-600 dark:bg-teal-800 dark:hover:bg-teal-900 rounded-md focus:outline-none focus:bg-teal-800"
             >
               Login
             </button>
