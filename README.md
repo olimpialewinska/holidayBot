@@ -1,63 +1,33 @@
-# Nuxt 3 Minimal Starter
+# HolidayBot
+This project is currently in development and is the user interface (UI) component designed to complement the [Holiday Scrapper server application.](https://github.com/olimpialewinska/holiday-scrapper)
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+The Holiday Scrapper frontend is designed to work in conjunction with the Holiday Scrapper server application, built using Nest.js. This server application scrapes vacation offers every half an hour and sends email notifications to users with new offers that match their preferences, leveraging PostgreSQL as its database.
 
-## Setup
+## Features
+- User registration and email confirmation
+- User preferences management
+- Displaying vacation offers
 
-Make sure to install the dependencies:
+## UI
+<p align="center">
+<img width="400" alt="UI-light" src="https://github.com/olimpialewinska/holidayBot/assets/100933608/2cce6984-fb87-4b21-b0b5-21f6bd86af48">
+<img width="400" alt="UI-dark" src="https://github.com/olimpialewinska/holidayBot/assets/100933608/481aec95-b143-4748-a977-7cfe086ee667">
+</p>
 
+
+## Getting Started
+To get started with the Holiday Scrapper frontend, follow these steps:
 ```bash
-# npm
+git clone https://github.com/olimpialewinska/holidayBot.git
+cd holidayBot
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
 ```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
+Configure the backend server endpoint in the .env file:
 ```bash
-# npm
+VUE_APP_BACKEND_URL=your_backend_url_here
+```
+Run the development server:
+```bash 
 npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
 ```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+This will start the Nuxt.js development server, allowing you to access the frontend at http://localhost:3000.
