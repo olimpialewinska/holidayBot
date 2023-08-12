@@ -71,7 +71,7 @@
     >
       <div class="text-3xl">1200$</div>
       <button
-        class="bg-teal-500 hover:bg-teal-600 dark:bg-teal-800 dark:hover:bg-teal-900 font-bold py-2 px-4 rounded transition-all"
+        class="bg-teal-500 hover:bg-teal-400 dark:bg-teal-800 dark:hover:bg-teal-900 font-bold py-2 px-4 rounded transition-all duration-200 ease-in-out"
       >
         See offer
       </button>

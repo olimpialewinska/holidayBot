@@ -25,6 +25,7 @@
           >
           <input
             type="email"
+            placeholder="Email"
             class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md focus:border-teal-400 focus:ring-teal-300 focus:outline-none focus:ring focus:ring-opacity-40"
           />
         </div>
@@ -37,6 +38,7 @@
             >
             <input
               type="password"
+              placeholder="Password"
               class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md focus:border-teal-400 focus:ring-teal-300 focus:outline-none focus:ring focus:ring-opacity-40"
             />
           </div>
