@@ -17,7 +17,9 @@
   "dependencies": {
     "@nuxt/image": "^1.0.0-rc.1",
     "@nuxtjs/color-mode": "^3.3.0",
+    "@pinia/nuxt": "^0.4.11",
     "nuxt-rating": "^0.0.15",
+    "pinia": "^2.1.6",
     "tw-elements": "^1.0.0-beta3"
   }
 }

@@ -70,6 +70,9 @@
 
 <script setup>
 const colorMode = useColorMode();
+definePageMeta({
+  middleware: ["is-user"],
+});
 const logoSrc = ref(null);
 
 onMounted(() => {

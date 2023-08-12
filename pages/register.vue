@@ -76,8 +76,15 @@
 </template>
 
 <script setup>
+definePageMeta({
+  middleware: ["is-user"],
+});
 const colorMode = useColorMode();
 const logoSrc = ref(null);
+
+useHead({
+  title: "HolidayBot - Register",
+});
 
 onMounted(() => {
   updateLogoSrc();

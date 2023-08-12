@@ -27,6 +27,7 @@
                     <input
                       type="email"
                       id="email"
+                      :value="store.email"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Email address"
                       required
@@ -180,7 +181,7 @@
                 >
                 <NuxtRating
                   :read-only="false"
-                  :ratingValue="4"
+                  :ratingValue="store.preferences.rating"
                   @rating-selected="logRating"
                 />
                 <label
@@ -194,6 +195,7 @@
                     type="range"
                     min="0"
                     max="5000"
+                    :value="store.preferences.price"
                     class="w-full"
                     @change="updateValue($event)"
                     @input="updateValue($event)"
@@ -202,6 +204,7 @@
                     <option value="0" label="0" />
                     <option value="1000" />
                     <option value="2000" />
+                    <option :value="store.preferences.price" selected />
                     <option value="3000" />
                     <option value="4000" />
                     <option value="5000" label="5000" />
@@ -224,13 +227,29 @@
 
 <script setup lang="ts">
 import { countries } from "../constants";
+import { useUserStore } from "../stores/userstore";
+definePageMeta({
+  middleware: ["auth"],
+});
+
+const store = useUserStore();
+
+useHead({
+  title: "HolidayBot - User Dashboard",
+  meta: [
+    {
+      name: "description",
+      content: "HolidayBot - User Dashboard",
+    },
+  ],
+});
 </script>
 
 <script lang="ts">
 export default {
   data() {
     return {
-      rangeValue: 0,
+      rangeValue: useUserStore().preferences.price,
     };
   },
   methods: {
@@ -240,6 +259,12 @@ export default {
     updateValue(event: Event) {
       const target = event.target as HTMLInputElement;
       this.rangeValue = Number(target.value);
+    },
+    savePreferences() {
+      console.log("preferences saved");
+    },
+    updateAccountData() {
+      console.log("account data updated");
     },
   },
 };

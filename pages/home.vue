@@ -295,7 +295,23 @@ export default {
 };
 </script>
 <script setup lang="ts">
+import { useUserStore } from "../stores/userstore";
+definePageMeta({
+  middleware: ["auth"],
+});
+
+const store = useUserStore();
+
 const OfferItem = resolveComponent("OfferItem");
+useHead({
+  title: "Home",
+  meta: [
+    {
+      name: "description",
+      content: "HolidayBot - Home page",
+    },
+  ],
+});
 
 const colorMode = useColorMode();
 const fill = ref("");
