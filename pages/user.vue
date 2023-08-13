@@ -22,10 +22,8 @@
                     <label
                       for="email"
                       :class="{
-                        'block mb-2 text-sm font-medium text-gray-900 dark:text-white':
-                          isValidEmail,
-                        'block mb-2 text-sm font-medium text-red-500':
-                          !isValidEmail,
+                        'form-label': isValidEmail,
+                        'form-label text-red-500': !isValidEmail,
                       }"
                     >
                       Email {{ isValidEmail ? "" : "is invalid" }}
@@ -34,7 +32,7 @@
                       type="email"
                       id="email"
                       v-model="email"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      class="input"
                       placeholder="Email address"
                     />
                   </div>
@@ -46,22 +44,18 @@
                       type="password"
                       placeholder="Password"
                       v-model="password"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-3"
+                      class="input mb-3"
                     />
                     <input
                       type="password"
                       v-model="confirmPassword"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      class="input"
                       placeholder="Confirm password"
                     />
                   </div>
 
                   <div class="mt-6">
-                    <button
-                      class="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-teal-500 hover:bg-teal-600 dark:bg-teal-800 dark:hover:bg-teal-900 rounded-md focus:outline-none focus:bg-teal-800"
-                    >
-                      Update account data
-                    </button>
+                    <button class="btn">Update account data</button>
                   </div>
                 </div>
               </form>
@@ -71,112 +65,62 @@
             <div class="flex flex-col justify-center items-center py-4">
               <h1 class="text-2xl uppercase font-bold">Preferences</h1>
               <form class="w-10/12 mt-4">
-                <label
-                  for="countries"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                <label for="countries" class="form-label"
                   >Select a destination:</label
                 >
-                <select
-                  id="countries"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                >
+                <select id="countries" class="input">
                   <option v-for="country in countries" :key="country">
                     {{ country }}
                   </option>
                 </select>
-                <label
-                  for="countries"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white mt-4"
+                <label for="countries" class="form-label mt-4"
                   >Choose the type of nutrition:
                 </label>
                 <div class="flex items-center mb-2">
-                  <input
-                    type="checkbox"
-                    value=""
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label
-                    for="default-checkbox"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  <input type="checkbox" value="" class="checkbox" />
+                  <label for="default-checkbox" class="checkbox-label"
                     >Default checkbox</label
                   >
                 </div>
                 <div class="flex items-center mb-2">
-                  <input
-                    type="checkbox"
-                    value=""
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label
-                    for="checked-checkbox"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  <input type="checkbox" value="" class="checkbox" />
+                  <label for="checked-checkbox" class="checkbox-label"
                     >Checked state</label
                   >
                 </div>
                 <div class="flex items-center mb-2">
-                  <input
-                    type="checkbox"
-                    value=""
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label
-                    for="default-checkbox"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  <input type="checkbox" value="" class="checkbox" />
+                  <label for="default-checkbox" class="checkbox-label"
                     >Default checkbox</label
                   >
                 </div>
                 <div class="flex items-center mb-2">
-                  <input
-                    type="checkbox"
-                    value=""
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label
-                    for="checked-checkbox"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  <input type="checkbox" value="" class="checkbox" />
+                  <label for="checked-checkbox" class="checkbox-label"
                     >Checked state</label
                   >
                 </div>
                 <div class="flex items-center mb-2">
-                  <input
-                    type="checkbox"
-                    value=""
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label
-                    for="default-checkbox"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  <input type="checkbox" value="" class="checkbox" />
+                  <label for="default-checkbox" class="checkbox-label"
                     >Default checkbox</label
                   >
                 </div>
                 <div class="flex items-center mb-2">
-                  <input
-                    type="checkbox"
-                    value=""
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label
-                    for="checked-checkbox"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  <input type="checkbox" value="" class="checkbox" />
+                  <label for="checked-checkbox" class="checkbox-label"
                     >Checked state</label
                   >
                 </div>
-                <label
-                  for="countries"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white mt-4"
+                <label for="countries" class="form-label mt-4"
                   >Choose the length of your trip:</label
                 >
-                <select
-                  id="duration"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                >
+                <select id="duration" class="input">
                   <option v-for="country in countries" :key="country">
                     {{ country }}
                   </option>
                 </select>
-                <label
-                  for="countries"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white mt-4"
+                <label for="countries" class="form-label mt-4"
                   >Select the number of stars for the hotel:</label
                 >
                 <NuxtRating
@@ -184,9 +128,7 @@
                   :ratingValue="store.preferences.rating"
                   @rating-selected="logRating"
                 />
-                <label
-                  for="countries"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white mt-4"
+                <label for="countries" class="form-label mt-4"
                   >Select max price range for the hotel:
                   {{ rangeValue }} zł</label
                 >
@@ -211,11 +153,7 @@
                   </datalist>
                 </div>
 
-                <button
-                  class="w-full px-4 py-2 mt-4 tracking-wide text-white transition-colors duration-200 transform bg-teal-500 hover:bg-teal-600 dark:bg-teal-800 dark:hover:bg-teal-900 rounded-md focus:outline-none focus:bg-teal-800"
-                >
-                  Save preferences
-                </button>
+                <button class="btn">Save preferences</button>
               </form>
             </div>
           </div>
@@ -285,9 +223,8 @@ export default {
     },
     passwordLabelClasses() {
       return {
-        "block mb-2 text-sm font-medium text-gray-900 dark:text-white":
-          this.isPasswordValid && this.isPasswordsMatch,
-        "block mb-2 text-sm font-medium text-red-500":
+        "form-label": this.isPasswordValid && this.isPasswordsMatch,
+        "form-label text-red-500":
           !this.isPasswordValid || !this.isPasswordsMatch,
       };
     },

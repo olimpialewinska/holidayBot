@@ -6,27 +6,11 @@
     <div
       class="flex flex-col justify-between gap-2 sm:gap-10 mb-6 mt-4 sm:flex-row w-11/12 sm:w-auto"
     >
-      <NuxtLink to="/home?type=all">
-        <button
-          class="bg-teal-500 hover:bg-teal-400 dark:bg-teal-800 border-2 border-teal-500 dark:border-teal-900 dark:hover:bg-teal-900 dark:text-white text-black font-bold rounded-full transition-all duration-200 ease-in-out px-4 py-2 lg:px-10 lg:py-2 w-full lg:w-auto whitespace-nowrap"
-          :class="{
-            'bg-teal-300 hover:bg-teal-400 dark:bg-teal-900 dark:hover:bg-teal-900 border-2 border-teal-400 dark:border-teal-400':
-              $route.query.type === 'all',
-          }"
-        >
-          All Offers
-        </button>
+      <NuxtLink to="/home?type=all" class="btn-offer-type">
+        All Offers
       </NuxtLink>
-      <NuxtLink to="/home?type=preferred">
-        <button
-          class="bg-teal-500 hover:bg-teal-400 dark:bg-teal-800 border-2 border-teal-500 dark:border-teal-900 dark:hover:bg-teal-900 dark:text-white text-black font-bold py-2 px-10 rounded-full transition-all duration-200 ease-in-out w-full lg:w-auto whitespace-nowrap"
-          :class="{
-            'bg-teal-300 hover:bg-teal-400 dark:bg-teal-900 dark:hover:bg-teal-900 border-2 border-teal-400 dark:border-teal-400':
-              $route.query.type !== 'all',
-          }"
-        >
-          My Preferred Offers
-        </button>
+      <NuxtLink to="/home?type=preferred" class="btn-offer-type">
+        My Preferred Offers
       </NuxtLink>
     </div>
     <div class="flex flex-col px-4 gap-4 w-full max-w-screen-xl">
@@ -100,25 +84,13 @@
             }"
           >
             <li>
-              <div
-                class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-200 active:text-neutral-800 active:no-underline dark:text-neutral-200 dark:hover:bg-neutral-600 cursor-pointer"
-              >
-                Price: from the lowest
-              </div>
+              <div class="popup-item">Price: from the lowest</div>
             </li>
             <li>
-              <div
-                class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-200 active:text-neutral-800 active:no-underline dark:text-neutral-200 dark:hover:bg-neutral-600 cursor-pointer"
-              >
-                Price: from the highest
-              </div>
+              <div class="popup-item">Price: from the highest</div>
             </li>
             <li>
-              <div
-                class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-200 active:text-neutral-800 active:no-underline dark:text-neutral-200 dark:hover:bg-neutral-600 cursor-pointer"
-              >
-                Highest rating
-              </div>
+              <div class="popup-item">Highest rating</div>
             </li>
           </ul>
         </div>
@@ -128,18 +100,13 @@
         class="flex flex-col w-full text-sm text-zinc-600 dark:text-zinc-400 items-center px-2 md:flex-row md:justify-between md:items-start justify-start md:space-x-4 md:space-y-0 space-y-4 gap-2 pb-6 mb-2 border-b border-gray-300 dark:border-zinc-600 py-2"
       >
         <div class="w-full">
-          <label for="destination" class="block mb-2 text-sm font-medium"
-            >Destination</label
-          >
-          <select
-            id="destination"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"
-          >
+          <label for="destination" class="form-label-filter">Destination</label>
+          <select id="destination" class="input mb-6">
             <option v-for="country in countries" :key="country">
               {{ country }}
             </option>
           </select>
-          <label for="countries" class="block mb-2 text-sm font-medium mt-4"
+          <label for="countries" class="form-label-filter mt-4"
             >Select max price range for the hotel: {{ rangeValue }} zł</label
           >
           <div class="w-full">
@@ -160,7 +127,7 @@
               <option value="5000" label="5000" />
             </datalist>
           </div>
-          <label for="countries" class="block mb-2 text-sm font-medium mt-4"
+          <label for="countries" class="form-label-filter mt-4"
             >Select the number of stars for the hotel:</label
           >
           <NuxtRating
@@ -171,79 +138,49 @@
           />
         </div>
         <div class="w-full">
-          <label for="destination" class="block mb-2 text-sm font-medium"
-            >Start Date:</label
-          >
-          <input
-            type="date"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          />
-          <label for="destination" class="block mb-2 text-sm font-medium mt-6"
+          <label for="destination" class="form-label-filter">Start Date:</label>
+          <input type="date" class="input" />
+          <label for="destination" class="form-label-filter mt-6"
             >End Date:</label
           >
-          <input
-            type="date"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          />
+          <input type="date" class="input" />
         </div>
         <div class="w-full">
-          <label for="countries" class="block mb-2 text-sm font-medium"
+          <label for="countries" class="form-label-filter"
             >Choose the type of nutrition:
           </label>
           <div class="flex items-center mb-2">
-            <input
-              type="checkbox"
-              value=""
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label for="default-checkbox" class="ml-2 text-sm font-medium"
+            <input type="checkbox" value="" class="checkbox" />
+            <label for="default-checkbox" class="checkbox-label-filter"
               >Default checkbox</label
             >
           </div>
           <div class="flex items-center mb-2">
-            <input
-              type="checkbox"
-              value=""
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label for="checked-checkbox" class="ml-2 text-sm font-medium"
+            <input type="checkbox" value="" class="checkbox" />
+            <label for="checked-checkbox" class="checkbox-label-filter"
               >Checked state</label
             >
           </div>
           <div class="flex items-center mb-2">
-            <input
-              type="checkbox"
-              value=""
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label for="default-checkbox" class="ml-2 text-sm font-medium"
+            <input type="checkbox" value="" class="checkbox" />
+            <label for="default-checkbox" class="checkbox-label-filter"
               >Default checkbox</label
             >
           </div>
           <div class="flex items-center mb-2">
-            <input
-              type="checkbox"
-              value=""
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label for="checked-checkbox" class="ml-2 text-sm font-medium"
+            <input type="checkbox" value="" class="checkbox" />
+            <label for="checked-checkbox" class="checkbox-label-filter"
               >Checked state</label
             >
           </div>
           <div class="flex items-center mb-2">
-            <input
-              type="checkbox"
-              value=""
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label for="default-checkbox" class="ml-2 text-sm font-medium"
+            <input type="checkbox" value="" class="checkbox" />
+            <label for="default-checkbox" class="checkbox-label-filter"
               >Default checkbox</label
             >
           </div>
           <div class="flex min-w-full flex-row items-end justify-end mt-4">
-            <button
-              class="bg-teal-500 hover:bg-teal-400 dark:bg-teal-800 dark:hover:bg-teal-900 font-bold py-2 px-14 rounded transition-all duration-200 ease-in-out text-black dark:text-white w-full lg:w-auto whitespace-nowrap"
-            >
+            <button class="btn w-full lg:w-auto whitespace-nowrap px-12">
               Search
             </button>
           </div>

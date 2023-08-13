@@ -3,9 +3,7 @@
     class="relative flex flex-wrap items-center"
     style="height: calc(100vh - 60px)"
   >
-    <div
-      class="w-11/12 p-6 m-auto dark:bg-zinc-800 bg-white border-t-4 border-teal-500 dark:border-teal-800 rounded-md shadow-md border-top sm:max-w-md"
-    >
+    <div class="form-bg">
       <div class="flex justify-center mb-4">
         <nuxt-picture
           v-if="logoSrc"
@@ -21,8 +19,8 @@
           <label
             for="email"
             :class="{
-              'block text-sm dark:text-gray-300 text-gray-800': isValidEmail,
-              'block text-sm text-red-500': !isValidEmail,
+              'form-label': isValidEmail,
+              'form-label text-red-500': !isValidEmail,
             }"
           >
             Email {{ isValidEmail ? "" : "is invalid" }}
@@ -31,7 +29,7 @@
             type="email"
             placeholder="Email"
             v-model="email"
-            class="block w-full px-4 py-2 mt-2 text-zinc-700 bg-white border rounded-md focus:border-teal-400 focus:ring-teal-300 focus:outline-none focus:ring focus:ring-opacity-40"
+            class="input"
           />
         </div>
         <div class="mt-4">
@@ -43,23 +41,19 @@
               type="password"
               placeholder="Password"
               v-model="password"
-              class="block w-full px-4 py-2 mt-2 text-zinc-700 bg-white border rounded-md focus:border-teal-400 focus:ring-teal-300 focus:outline-none focus:ring focus:ring-opacity-40"
+              class="input mb-3"
             />
           </div>
           <div>
             <input
               type="password"
               v-model="confirmPassword"
-              class="block w-full px-4 py-2 mt-2 text-zinc-700 bg-white border rounded-md focus:border-teal-400 focus:ring-teal-300 focus:outline-none focus:ring focus:ring-opacity-40"
+              class="input"
               placeholder="Confirm password"
             />
           </div>
           <div class="mt-6">
-            <button
-              class="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-teal-500 hover:bg-teal-600 dark:bg-teal-800 dark:hover:bg-teal-900 rounded-md focus:outline-none focus:bg-teal-600"
-            >
-              Login
-            </button>
+            <button class="btn">Login</button>
           </div>
         </div>
       </form>
@@ -128,9 +122,8 @@ export default {
     },
     passwordLabelClasses() {
       return {
-        "block text-sm dark:text-gray-300 text-gray-800":
-          this.isPasswordValid && this.isPasswordsMatch,
-        "block text-sm text-red-500":
+        "form-label": this.isPasswordValid && this.isPasswordsMatch,
+        "form-label text-red-500":
           !this.isPasswordValid || !this.isPasswordsMatch,
       };
     },
