@@ -20,12 +20,17 @@
         <div>
           <label
             for="email"
-            class="block text-sm dark:text-gray-300 text-gray-800"
-            >Email</label
+            :class="{
+              'block text-sm dark:text-gray-300 text-gray-800': isValidEmail,
+              'block text-sm text-red-500': !isValidEmail,
+            }"
           >
+            Email {{ isValidEmail ? "" : "is invalid" }}
+          </label>
           <input
             type="email"
             placeholder="Email"
+            v-model="email"
             class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-md focus:border-teal-400 focus:ring-teal-300 focus:outline-none focus:ring focus:ring-opacity-40"
           />
         </div>
@@ -88,4 +93,18 @@ function updateLogoSrc() {
 }
 </script>
 
-<script></script>
+<script>
+export default {
+  data() {
+    return {
+      email: "",
+    };
+  },
+  computed: {
+    isValidEmail() {
+      if (!this.email) return true;
+      return /^[^@]+@\w+(\.\w+)+\w$/.test(this.email);
+    },
+  },
+};
+</script>

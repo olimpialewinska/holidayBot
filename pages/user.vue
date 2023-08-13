@@ -13,7 +13,7 @@
           <div class="flex-1">
             <div class="flex flex-col justify-center items-center py-4 h-full">
               <div
-                class="w-28 h-28 rounded-full bg-cover bg-center bg-no-repeat"
+                class="w-48 h-48 rounded-full bg-cover bg-center bg-no-repeat"
                 :style="{ backgroundImage: `url('/user.jpg')` }"
               />
               <form class="mt-6 w-10/12">
@@ -21,38 +21,38 @@
                   <div class="mb-6">
                     <label
                       for="email"
-                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >Email address</label
+                      :class="{
+                        'block mb-2 text-sm font-medium text-gray-900 dark:text-white':
+                          isValidEmail,
+                        'block mb-2 text-sm font-medium text-red-500':
+                          !isValidEmail,
+                      }"
                     >
+                      Email {{ isValidEmail ? "" : "is invalid" }}
+                    </label>
                     <input
                       type="email"
                       id="email"
-                      :value="store.email"
+                      v-model="email"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Email address"
-                      required
                     />
                   </div>
                   <div class="mb-6">
-                    <label
-                      for="password"
-                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >Password</label
-                    >
+                    <label for="password" :class="passwordLabelClasses">
+                      {{ passwordLabel }}
+                    </label>
                     <input
                       type="password"
-                      id="password"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Password"
-                      required
+                      v-model="password"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-3"
                     />
-
                     <input
                       type="password"
-                      id="confirm_password"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
+                      v-model="confirmPassword"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Confirm password"
-                      required
                     />
                   </div>
 
@@ -250,6 +250,9 @@ export default {
   data() {
     return {
       rangeValue: useUserStore().preferences.price,
+      email: useUserStore().email,
+      password: "",
+      confirmPassword: "",
     };
   },
   methods: {
@@ -265,6 +268,37 @@ export default {
     },
     updateAccountData() {
       console.log("account data updated");
+    },
+  },
+  computed: {
+    isValidEmail() {
+      if (!this.email) return true;
+      return /^[^@]+@\w+(\.\w+)+\w$/.test(this.email);
+    },
+    isPasswordValid() {
+      if (!this.password) return true;
+      return this.password.length >= 6;
+    },
+    isPasswordsMatch() {
+      if (!this.confirmPassword) return true;
+      return this.password === this.confirmPassword;
+    },
+    passwordLabelClasses() {
+      return {
+        "block mb-2 text-sm font-medium text-gray-900 dark:text-white":
+          this.isPasswordValid && this.isPasswordsMatch,
+        "block mb-2 text-sm font-medium text-red-500":
+          !this.isPasswordValid || !this.isPasswordsMatch,
+      };
+    },
+    passwordLabel() {
+      if (this.isPasswordValid && this.isPasswordsMatch) {
+        return "Password";
+      } else if (!this.isPasswordValid) {
+        return "Password must have at least 6 characters";
+      } else {
+        return "Passwords don't match";
+      }
     },
   },
 };

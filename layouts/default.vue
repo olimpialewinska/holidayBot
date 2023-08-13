@@ -35,21 +35,16 @@
         class="lg:flex lg:flex-grow items-center"
       >
         <ul class="flex flex-col lg:flex-row list-none ml-auto">
-          <NuxtLink to="/">
+          <NuxtLink
+            v-for="link in filteredNavLinks"
+            :to="link.to"
+            :key="link.to"
+          >
             <li class="nav-item">
               <div
                 class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug dark:text-white hover:opacity-75"
               >
-                <span class="ml-2">Login</span>
-              </div>
-            </li>
-          </NuxtLink>
-          <NuxtLink to="/register">
-            <li class="nav-item">
-              <div
-                class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug dark:text-white hover:opacity-75"
-              >
-                <span class="ml-2">Register</span>
+                <span class="ml-2">{{ link.text }}</span>
               </div>
             </li>
           </NuxtLink>
@@ -75,6 +70,7 @@
 </template>
 
 <script setup>
+import { useUserStore } from "../stores/userstore";
 const colorMode = useColorMode();
 const logoSrc = ref(null);
 
@@ -96,11 +92,32 @@ export default {
   data() {
     return {
       showMenu: false,
+      user: useUserStore().$state,
     };
   },
   methods: {
     toggleNavbar: function () {
       this.showMenu = !this.showMenu;
+    },
+  },
+  computed: {
+    userLoggedIn() {
+      return this.user.id && this.user.id !== null;
+    },
+    filteredNavLinks() {
+      return this.navLinks.filter((link) => link.condition);
+    },
+    navLinks() {
+      return [
+        { to: "/", text: "Login", condition: !this.userLoggedIn },
+        { to: "/register", text: "Register", condition: !this.userLoggedIn },
+        {
+          to: "/home?type=preferred",
+          text: "Offers",
+          condition: this.userLoggedIn,
+        },
+        { to: "/user", text: this.user.email, condition: this.userLoggedIn },
+      ];
     },
   },
 };
