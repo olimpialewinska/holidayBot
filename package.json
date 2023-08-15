@@ -11,6 +11,7 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@nuxtjs/tailwindcss": "^6.8.0",
+    "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
     "@types/node": "^18.17.3",
     "nuxt": "^3.6.5"
   },
@@ -18,8 +19,10 @@
     "@nuxt/image": "^1.0.0-rc.1",
     "@nuxtjs/color-mode": "^3.3.0",
     "@pinia/nuxt": "^0.4.11",
+    "axios": "^1.4.0",
     "nuxt-rating": "^0.0.15",
     "pinia": "^2.1.6",
-    "tw-elements": "^1.0.0-beta3"
+    "tw-elements": "^1.0.0-beta3",
+    "vue3-toastify": "^0.1.12"
   }
 }

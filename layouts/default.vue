@@ -48,6 +48,14 @@
               </div>
             </li>
           </NuxtLink>
+          <li v-if="userLoggedIn" class="nav-item">
+            <div
+              class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug dark:text-white hover:opacity-75"
+            >
+              <span class="ml-2" @click="logout">Logout</span>
+            </div>
+          </li>
+
           <li class="nav-item">
             <div
               class="px-3 py-2 flex items-center text-xs uppercase font-bold"
@@ -93,11 +101,16 @@ export default {
     return {
       showMenu: false,
       user: useUserStore().$state,
+      userstate: useUserStore(),
     };
   },
   methods: {
     toggleNavbar: function () {
       this.showMenu = !this.showMenu;
+    },
+    logout() {
+      this.userstate.deleteUser();
+      this.$router.push("/");
     },
   },
   computed: {

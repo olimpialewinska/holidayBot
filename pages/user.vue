@@ -125,7 +125,7 @@
                 >
                 <NuxtRating
                   :read-only="false"
-                  :ratingValue="store.preferences.rating"
+                  :ratingValue="store.preferences?.rating"
                   @rating-selected="logRating"
                 />
                 <label for="countries" class="form-label mt-4"
@@ -137,7 +137,7 @@
                     type="range"
                     min="0"
                     max="5000"
-                    :value="store.preferences.price"
+                    :value="store.preferences?.price"
                     class="w-full"
                     @change="updateValue($event)"
                     @input="updateValue($event)"
@@ -146,7 +146,7 @@
                     <option value="0" label="0" />
                     <option value="1000" />
                     <option value="2000" />
-                    <option :value="store.preferences.price" selected />
+                    <option :value="store.preferences?.price" selected />
                     <option value="3000" />
                     <option value="4000" />
                     <option value="5000" label="5000" />
@@ -187,7 +187,7 @@ useHead({
 export default {
   data() {
     return {
-      rangeValue: useUserStore().preferences.price,
+      rangeValue: useUserStore().preferences?.price,
       email: useUserStore().email,
       password: "",
       confirmPassword: "",

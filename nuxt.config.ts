@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "nuxt-rating",
     "@pinia/nuxt",
+    "@pinia-plugin-persistedstate/nuxt",
   ],
   pinia: {
     autoImports: ["defineStore", ["defineStore", "definePiniaStore"]],

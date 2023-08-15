@@ -14,7 +14,7 @@
           alt="Logo"
         />
       </div>
-      <form class="mt-6">
+      <div class="mt-6">
         <div>
           <label
             for="email"
@@ -35,13 +35,19 @@
         <div class="mt-4">
           <div>
             <label for="password" class="form-label">Password</label>
-            <input type="password" placeholder="Password" class="input" />
+            <input
+              type="password"
+              placeholder="Password"
+              class="input"
+              v-model="password"
+              v-on:keyup.enter="login"
+            />
           </div>
           <div class="mt-6">
-            <button class="btn">Login</button>
+            <button class="btn" @click="login">Login</button>
           </div>
         </div>
-      </form>
+      </div>
       <div class="flex items-center justify-center mt-8">
         <div
           class="text-xs font-light dark:text-gray-300 text-gray-700"
@@ -60,10 +66,14 @@
 </template>
 
 <script setup>
+import axios from "axios";
+import { useUserStore } from "../stores/userstore";
+const store = useUserStore();
 const colorMode = useColorMode();
 definePageMeta({
   middleware: ["is-user"],
 });
+
 const logoSrc = ref(null);
 
 onMounted(() => {
@@ -80,16 +90,46 @@ function updateLogoSrc() {
 </script>
 
 <script>
+import { serverLink } from "../constants";
 export default {
   data() {
     return {
       email: "",
+      password: "",
+      userStore: useUserStore(),
     };
   },
   computed: {
     isValidEmail() {
       if (!this.email) return true;
       return /^[^@]+@\w+(\.\w+)+\w$/.test(this.email);
+    },
+  },
+  methods: {
+    notify(message, type) {
+      if (type === "success") {
+        return this.$toast.success(message);
+      }
+      useNuxtApp().$toast.error(message);
+    },
+    async login() {
+      if (!this.isValidEmail || !this.password || !this.email) {
+        return this.notify("Please fill correctly all fields");
+      }
+      try {
+        const response = await axios.post(`${serverLink}/auth/login`, {
+          email: this.email,
+          password: this.password,
+        });
+        if (response.data.error) {
+          return this.notify(response.data.error);
+        }
+        this.userStore.updateUser(response.data);
+
+        this.$router.push("/home");
+      } catch (error) {
+        this.notify(error.message);
+      }
     },
   },
 };

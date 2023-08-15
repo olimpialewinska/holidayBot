@@ -1,19 +1,14 @@
 import { IUser } from "constants/IUser";
 import { defineStore } from "pinia";
 
-export const useUserStore = defineStore({
-  id: "user",
+export const useUserStore = defineStore("user", {
   state: (): IUser => ({
-    id: 1,
-    email: "aaa@wp.pl",
-    preferences: {
-      destination: "",
-      mealType: "",
-      duration: 0,
-      rating: 3,
-      price: 1200,
-    },
+    id: null,
+    email: null,
+    accessToken: null,
+    preferences: null,
   }),
+  persist: true,
 
   actions: {
     updateUser(user: IUser) {
@@ -21,15 +16,9 @@ export const useUserStore = defineStore({
     },
     deleteUser() {
       Object.assign(this.$state, {
-        id: 0,
-        email: "",
-        preferences: {
-          destination: "",
-          mealType: "",
-          duration: 0,
-          rating: 0,
-          price: 0,
-        },
+        id: null,
+        email: null,
+        preferences: null,
       });
     },
   },

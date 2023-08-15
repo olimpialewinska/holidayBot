@@ -14,7 +14,7 @@
           alt="Logo"
         />
       </div>
-      <form class="mt-6">
+      <div class="mt-6">
         <div>
           <label
             for="email"
@@ -50,13 +50,14 @@
               v-model="confirmPassword"
               class="input"
               placeholder="Confirm password"
+              v-on:keyup.enter="handleSubmit"
             />
           </div>
           <div class="mt-6">
-            <button class="btn">Login</button>
+            <button class="btn" @click="handleSubmit">Register</button>
           </div>
         </div>
-      </form>
+      </div>
       <div class="flex items-center justify-center mt-8">
         <div
           class="text-xs font-light dark:text-gray-300 text-gray-700"
@@ -75,6 +76,7 @@
 </template>
 
 <script setup>
+import axios from "axios";
 definePageMeta({
   middleware: ["is-user"],
 });
@@ -99,6 +101,8 @@ function updateLogoSrc() {
 </script>
 
 <script>
+import { serverLink } from "../constants";
+
 export default {
   data() {
     return {
@@ -134,6 +138,41 @@ export default {
         return "Password must have at least 6 characters";
       } else {
         return "Passwords don't match";
+      }
+    },
+  },
+  methods: {
+    notify(message, type) {
+      if (type === "success") {
+        return this.$toast.success(message);
+      }
+      useNuxtApp().$toast.error(message);
+    },
+    async handleSubmit() {
+      if (
+        !this.isValidEmail ||
+        !this.isPasswordValid ||
+        !this.isPasswordsMatch ||
+        !this.email ||
+        !this.password ||
+        !this.confirmPassword
+      )
+        return this.notify("Invalid data");
+
+      try {
+        const res = await axios.post(`${serverLink}/auth/register`, {
+          email: this.email,
+          password: this.password,
+        });
+        if (res.data.error) {
+          return this.notify(res.data.error);
+        }
+        this.notify("Successfully registered, confirm your email", "success");
+        setTimeout(() => {
+          this.$router.push("/");
+        }, 2000);
+      } catch (err) {
+        this.notify("Something went wrong");
       }
     },
   },
