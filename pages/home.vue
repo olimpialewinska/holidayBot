@@ -18,6 +18,7 @@
         class="flex flex-row w-full text-sm text-zinc-600 dark:text-zinc-400 items-center border-y border-gray-300 dark:border-zinc-600 py-2"
       >
         <div
+          v-if="!isPreferred"
           class="cursor-pointer mr-4 opacity-70 hover:opacity-100 transition-all duration-150 ease-in-out overflow-visible"
         >
           <button
@@ -44,8 +45,10 @@
 
         <div class="flex-1">
           <p
+            v-if="!isPreferred"
             class="cursor-pointer pl-4 border-l border-gray-300 dark:border-zinc-600 opacity-70 hover:opacity-100 transition-all duration-150 ease-in-out"
             style="max-width: 80px"
+            @click="clearAll"
           >
             Clear all
           </p>
@@ -101,13 +104,22 @@
       >
         <div class="w-full">
           <label for="destination" class="form-label-filter">Destination</label>
-          <select id="destination" class="input mb-6">
-            <option v-for="country in countries" :key="country">
-              {{ country }}
+          <select
+            id="destination"
+            ref="destination"
+            class="input mb-6"
+            v-model="query.destination"
+          >
+            <option value="" disabled selected hidden>
+              Select destination
+            </option>
+            <option v-for="c in countries" :key="c" :value="c">
+              {{ c }}
             </option>
           </select>
           <label for="countries" class="form-label-filter mt-4"
-            >Select max price range for the hotel: {{ rangeValue }} zł</label
+            >Select max price range for the hotel:
+            {{ query.maxPrice }} zł</label
           >
           <div class="w-full">
             <input
@@ -117,6 +129,7 @@
               class="w-full"
               @change="updateValue($event)"
               @input="updateValue($event)"
+              v-model="query.maxPrice"
             />
             <datalist id="tickmarks">
               <option value="0" label="0" />
@@ -132,112 +145,127 @@
           >
           <NuxtRating
             :read-only="false"
-            :ratingValue="4"
-            :ratingSize="'24px'"
+            :value="query.stars"
             @rating-selected="logRating"
+            :ratingSize="'24px'"
           />
         </div>
         <div class="w-full">
           <label for="destination" class="form-label-filter">Start Date:</label>
-          <input type="date" class="input" />
+          <input type="date" class="input" v-model="query.startDate" />
           <label for="destination" class="form-label-filter mt-6"
             >End Date:</label
           >
-          <input type="date" class="input" />
+          <input type="date" class="input" v-model="query.endDate" />
         </div>
         <div class="w-full">
           <label for="countries" class="form-label-filter"
-            >Choose the type of nutrition:
-          </label>
-          <div class="flex items-center mb-2">
-            <input type="checkbox" value="" class="checkbox" />
-            <label for="default-checkbox" class="checkbox-label-filter"
-              >Default checkbox</label
-            >
+            >Choose the type of nutrition:</label
+          >
+          <div
+            v-for="(checkbox, index) in checkboxes"
+            :key="index"
+            class="flex items-center mb-2"
+          >
+            <input
+              type="checkbox"
+              :value="checkbox.label"
+              class="checkbox"
+              v-model="selectedCheckboxes"
+              @change="updateNutrition"
+            />
+            <label :for="'checkbox-' + index" class="checkbox-label-filter">
+              {{ checkbox.label }}
+            </label>
           </div>
-          <div class="flex items-center mb-2">
-            <input type="checkbox" value="" class="checkbox" />
-            <label for="checked-checkbox" class="checkbox-label-filter"
-              >Checked state</label
-            >
-          </div>
-          <div class="flex items-center mb-2">
-            <input type="checkbox" value="" class="checkbox" />
-            <label for="default-checkbox" class="checkbox-label-filter"
-              >Default checkbox</label
-            >
-          </div>
-          <div class="flex items-center mb-2">
-            <input type="checkbox" value="" class="checkbox" />
-            <label for="checked-checkbox" class="checkbox-label-filter"
-              >Checked state</label
-            >
-          </div>
-          <div class="flex items-center mb-2">
-            <input type="checkbox" value="" class="checkbox" />
-            <label for="default-checkbox" class="checkbox-label-filter"
-              >Default checkbox</label
-            >
-          </div>
+
           <div class="flex min-w-full flex-row items-end justify-end mt-4">
-            <button class="btn w-full lg:w-auto whitespace-nowrap px-12">
+            <button
+              class="btn w-full lg:w-auto whitespace-nowrap px-12"
+              @click="search"
+            >
               Search
             </button>
           </div>
         </div>
       </div>
-
-      <OfferItem />
-      <OfferItem /><OfferItem /><OfferItem /><OfferItem /><OfferItem /><OfferItem />
+      <div v-for="offer in searchResults" :key="offer.id">
+        <OfferItem :offer="offer" />
+      </div>
+      <div v-if="searchResults?.length === 0">
+        <h1
+          class="text-center text-zinc-600 dark:text-zinc-400 text-lg font-bold uppercase mt-10"
+        >
+          No offers found
+        </h1>
+      </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { countries } from "../constants";
-export default {
-  data() {
-    return {
-      msg: "Home",
-      showContent: false,
-      rangeValue: 0,
-      sort: false,
-    };
-  },
-  mounted() {
-    const modal = document.getElementById("modal");
-    const button = document.getElementById("sortBtn");
-    window.addEventListener("click", (event) => {
-      const target = event.target as Node;
-      if (button?.contains(target) && this.sort === false) {
-        this.sort = true;
-      } else if (!modal?.contains(target) && this.sort === true) {
-        this.sort = false;
-      }
-    });
-  },
-  methods: {
-    toggleContent(event: Event) {
-      event.preventDefault();
-      this.showContent = !this.showContent;
-    },
-    updateValue(event: Event) {
-      const target = event.target as HTMLInputElement;
-      this.rangeValue = Number(target.value);
-    },
-    logRating(event: number) {
-      console.log(event);
-    },
-  },
-};
-</script>
 <script setup lang="ts">
 import { useUserStore } from "../stores/userstore";
+import { serverLink } from "../constants";
+import { IOffer } from "constants/IOffer";
+import { onMounted, ref } from "vue";
+import { reactive, watch } from "vue";
 definePageMeta({
   middleware: ["auth"],
 });
 
-const store = useUserStore();
+const route = useRoute();
+const searchQuery = ref("");
+const searchResults = ref<IOffer[] | null>([]);
+
+watch([() => route.query], ([query]) => {
+  fetchSearchResults(query);
+});
+
+const fetchSearchResults = async (query: any) => {
+  console.log(query);
+  try {
+    let response = null;
+    if (query.type === "preferred") {
+      console.log("preferred");
+      searchResults.value = null;
+    } else if (query.type === "search") {
+      console.log("search");
+      response = await fetch(
+        `${serverLink}/preferences/offers?` +
+          new URLSearchParams({
+            destination: query.destination,
+            maxPrice: query.maxPrice,
+            stars: query.stars,
+            startDate: query.startDate,
+            endDate: query.endDate,
+            nutrition: query.nutrition,
+          }),
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      searchResults.value = await response.json();
+    } else {
+      response = await fetch(`${serverLink}/preferences/getAllOffers`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      searchResults.value = await response.json();
+    }
+  } catch (error) {
+    console.error("Error fetching search results:", error);
+  }
+};
+
+onMounted(() => {
+  console.log(route.query);
+  fetchSearchResults(route.query);
+});
 
 const OfferItem = resolveComponent("OfferItem");
 useHead({
@@ -264,6 +292,106 @@ watch(colorMode, () => {
 function updateLogoSrc() {
   fill.value = colorMode.value === "dark" ? "#9ca3af" : "#6b7280";
 }
+</script>
+
+<script lang="ts">
+export default {
+  data() {
+    return {
+      msg: "Home",
+      showContent: false,
+      rangeValue: 0,
+      sort: false,
+      sortValue: "asc",
+      store: useUserStore().$state,
+      checkboxes: [
+        { label: "All inclusive" },
+        { label: "Śniadania" },
+        { label: "Śniadania i obiadokolacje" },
+        { label: "Brak" },
+      ],
+      selectedCheckboxes: [],
+      query: {
+        type: "all",
+        destination: this.$route!.query.destination || "",
+        maxPrice: this.$route!.query.maxPrice || 1000,
+        stars: this.$route!.query.stars || "",
+        startDate: this.$route!.query.startDate || "",
+        endDate: this.$route!.query.endDate || "",
+        nutrition: this.$route!.query.nutrition || "",
+      },
+      countries: ["Malta", "Bułgaria", "Grecja", "Hiszpania", "Turcja", "Cypr"],
+    };
+  },
+
+  mounted() {
+    const modal = document.getElementById("modal");
+    const button = document.getElementById("sortBtn");
+    window.addEventListener("click", (event) => {
+      const target = event.target as Node;
+      if (button?.contains(target) && this.sort === false) {
+        this.sort = true;
+      } else if (!modal?.contains(target) && this.sort === true) {
+        this.sort = false;
+      }
+    });
+  },
+  computed: {
+    isPreferred() {
+      return this.$route!.query.type === "preferred";
+    },
+  },
+  methods: {
+    toggleContent(event: Event) {
+      event.preventDefault();
+      this.showContent = !this.showContent;
+    },
+    updateValue(event: Event) {
+      const target = event.target as HTMLInputElement;
+      this.rangeValue = Number(target.value);
+    },
+    logRating(event: number) {
+      this.query.stars = event as unknown as string;
+    },
+    search() {
+      console.log(this.query);
+      this.showContent = false;
+      this.$router.push({
+        path: "/home",
+        query: {
+          type: "search",
+          destination: this.query.destination,
+          maxPrice: this.query.maxPrice,
+          stars: this.query.stars,
+          startDate: this.query.startDate,
+          endDate: this.query.endDate,
+          nutrition: this.query.nutrition,
+        },
+      });
+    },
+    updateNutrition() {
+      this.query.nutrition = this.selectedCheckboxes.join(",");
+    },
+    clearAll() {
+      this.showContent = false;
+      this.query = {
+        type: "all",
+        destination: "",
+        maxPrice: "",
+        stars: "",
+        startDate: "",
+        endDate: "",
+        nutrition: "",
+      };
+      this.$router.push({
+        path: "/home",
+        query: {
+          type: "all",
+        },
+      });
+    },
+  },
+};
 </script>
 
 <style scoped></style>

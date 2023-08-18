@@ -5,16 +5,16 @@
     <div class="w-full lg:w-96">
       <div
         class="h-60 lg:h-60 bg-cover bg-center bg-no-repeat rounded-lg"
-        :style="{ backgroundImage: `url('/xd.jpg')` }"
+        :style="{ backgroundImage: `url('${offer.image}')` }"
       ></div>
     </div>
     <div class="flex-1 flex flex-col">
-      <div class="text-2xl">Hotel ABC</div>
+      <div class="text-2xl">{{ offer.title }}</div>
       <p class="inline-flex items-center">
-        <StarRating :totalStars="5" />
+        <StarRating :totalStars="offer.rating" />
       </p>
       <p class="text-sm text-gray-500 truncate dark:text-gray-400 mt-1">
-        Grecja/Ateny
+        {{ offer.destination }}
       </p>
       <p class="inline-flex items-center" style="margin-top: 10px">
         <svg
@@ -28,9 +28,9 @@
             :fill="fill"
           />
         </svg>
-        <span class="text-sm text-gray-500 truncate dark:text-gray-400"
-          >14.09.2023-28.09.2023</span
-        >
+        <span class="text-sm text-gray-500 truncate dark:text-gray-400">{{
+          offer.duration
+        }}</span>
       </p>
       <p class="inline-flex items-center" style="margin-top: 4px">
         <svg
@@ -44,9 +44,9 @@
             :fill="fill"
           />
         </svg>
-        <span class="text-sm text-gray-500 truncate dark:text-gray-400"
-          >All-inclusive</span
-        >
+        <span class="text-sm text-gray-500 truncate dark:text-gray-400">{{
+          offer.mealType
+        }}</span>
       </p>
       <p class="inline-flex items-center" style="margin-top: 4px">
         <svg
@@ -60,26 +60,34 @@
             :fill="fill"
           />
         </svg>
-        <span class="text-sm text-gray-500 truncate dark:text-gray-400"
-          >Wakacje.pl</span
-        >
+        <span class="text-sm text-gray-500 truncate dark:text-gray-400">{{
+          offer.provider
+        }}</span>
       </p>
       <div style="flex: 1"></div>
     </div>
     <div
       class="flex flex-row max-h-max justify-between items-center px-8 py-3 bg-transparent lg:flex-col lg:border-l border-gray-300 dark:border-gray-600 bg-gray-300 dark:bg-zinc-600 lg:bg-transparent lg:dark:bg-transparent rounded-lg lg:rounded-none"
     >
-      <div class="text-3xl">1200$</div>
-      <button
+      <div class="text-3xl">{{ offer.pricePerPerson }} zł</div>
+      <a
+        :href="offer.offerLink"
+        target="_blank"
         class="bg-teal-500 hover:bg-teal-400 dark:bg-teal-800 dark:hover:bg-teal-900 font-bold py-2 px-4 rounded transition-all duration-200 ease-in-out"
       >
         See offer
-      </button>
+      </a>
     </div>
   </div>
 </template>
 
 <script setup>
+const props = defineProps({
+  offer: {
+    type: Object,
+    required: true,
+  },
+});
 const colorMode = useColorMode();
 const StarRating = resolveComponent("Star");
 const fill = ref(null);
