@@ -6,10 +6,19 @@
     <div
       class="flex flex-col justify-between gap-2 sm:gap-10 mb-6 mt-4 sm:flex-row w-11/12 sm:w-auto"
     >
-      <NuxtLink to="/home?type=all" class="btn-offer-type">
+      <NuxtLink
+        :to="{ path: '/home', query: { type: 'all', sort: sortStore.sort } }"
+        class="btn-offer-type"
+      >
         All Offers
       </NuxtLink>
-      <NuxtLink to="/home?type=preferred" class="btn-offer-type">
+      <NuxtLink
+        :to="{
+          path: '/home',
+          query: { type: 'preferred', sort: sortStore.sort },
+        }"
+        class="btn-offer-type"
+      >
         My Preferred Offers
       </NuxtLink>
     </div>
@@ -86,20 +95,20 @@
               display: sort ? 'block' : 'none',
             }"
           >
-            <li>
+            <li @click="changeSort('asc')">
               <div class="popup-item">Price: from the lowest</div>
             </li>
-            <li>
+            <li @click="changeSort('desc')">
               <div class="popup-item">Price: from the highest</div>
             </li>
-            <li>
+            <li @click="changeSort('stars')">
               <div class="popup-item">Highest rating</div>
             </li>
           </ul>
         </div>
       </div>
       <div
-        v-if="showContent"
+        v-if="showContent && !isPreferred"
         class="flex flex-col w-full text-sm text-zinc-600 dark:text-zinc-400 items-center px-2 md:flex-row md:justify-between md:items-start justify-start md:space-x-4 md:space-y-0 space-y-4 gap-2 pb-6 mb-2 border-b border-gray-300 dark:border-zinc-600 py-2"
       >
         <div class="w-full">
@@ -113,7 +122,7 @@
             <option value="" disabled selected hidden>
               Select destination
             </option>
-            <option v-for="c in countries" :key="c" :value="c">
+            <option v-for="c in data.destinations" :key="c" :value="c">
               {{ c }}
             </option>
           </select>
@@ -124,28 +133,20 @@
           <div class="w-full">
             <input
               type="range"
-              min="0"
-              max="5000"
+              :min="data.prices.minPrice"
+              :max="data.prices.maxPrice"
               class="w-full"
               @change="updateValue($event)"
               @input="updateValue($event)"
               v-model="query.maxPrice"
             />
-            <datalist id="tickmarks">
-              <option value="0" label="0" />
-              <option value="1000" />
-              <option value="2000" />
-              <option value="3000" />
-              <option value="4000" />
-              <option value="5000" label="5000" />
-            </datalist>
           </div>
           <label for="countries" class="form-label-filter mt-4"
             >Select the number of stars for the hotel:</label
           >
           <NuxtRating
             :read-only="false"
-            :value="query.stars"
+            :rating-value="query.stars"
             @rating-selected="logRating"
             :ratingSize="'24px'"
           />
@@ -159,7 +160,7 @@
           <input type="date" class="input" v-model="query.endDate" />
         </div>
         <div class="w-full">
-          <label for="countries" class="form-label-filter"
+          <label for="nutrition" class="form-label-filter"
             >Choose the type of nutrition:</label
           >
           <div
@@ -169,7 +170,7 @@
           >
             <input
               type="checkbox"
-              :value="checkbox.label"
+              :value="checkbox.value"
               class="checkbox"
               v-model="selectedCheckboxes"
               @change="updateNutrition"
@@ -205,6 +206,7 @@
 
 <script setup lang="ts">
 import { useUserStore } from "../stores/userstore";
+import { useSortStore } from "../stores/sortStore";
 import { serverLink } from "../constants";
 import { IOffer } from "constants/IOffer";
 import { onMounted, ref } from "vue";
@@ -214,22 +216,38 @@ definePageMeta({
 });
 
 const route = useRoute();
-const searchQuery = ref("");
 const searchResults = ref<IOffer[] | null>([]);
 
 watch([() => route.query], ([query]) => {
   fetchSearchResults(query);
 });
 
+const res = await fetch(`${serverLink}/preferences/data`, {
+  method: "GET",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+const data = reactive(await res.json());
+
 const fetchSearchResults = async (query: any) => {
-  console.log(query);
   try {
     let response = null;
     if (query.type === "preferred") {
-      console.log("preferred");
-      searchResults.value = null;
+      response = await fetch(`${serverLink}/preferences/dedicatedOffers`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + useUserStore().$state.accessToken,
+        },
+        body: JSON.stringify({
+          email: useUserStore().$state.email,
+          order: query.sort,
+        }),
+      });
+      searchResults.value = await response.json();
     } else if (query.type === "search") {
-      console.log("search");
       response = await fetch(
         `${serverLink}/preferences/offers?` +
           new URLSearchParams({
@@ -239,31 +257,39 @@ const fetchSearchResults = async (query: any) => {
             startDate: query.startDate,
             endDate: query.endDate,
             nutrition: query.nutrition,
+            sort: query.sort,
           }),
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + useUserStore().$state.accessToken,
           },
         }
       );
       searchResults.value = await response.json();
     } else {
-      response = await fetch(`${serverLink}/preferences/getAllOffers`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      console.log("get all offers");
+      response = await fetch(
+        `${serverLink}/preferences/getAllOffers?` +
+          new URLSearchParams({
+            sort: query.sort,
+          }),
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + useUserStore().$state.accessToken,
+          },
+        }
+      );
+      console.log(response);
       searchResults.value = await response.json();
     }
-  } catch (error) {
-    console.error("Error fetching search results:", error);
-  }
+  } catch (error) {}
 };
 
 onMounted(() => {
-  console.log(route.query);
   fetchSearchResults(route.query);
 });
 
@@ -295,6 +321,7 @@ function updateLogoSrc() {
 </script>
 
 <script lang="ts">
+import { ISort } from "constants/ISort";
 export default {
   data() {
     return {
@@ -302,20 +329,24 @@ export default {
       showContent: false,
       rangeValue: 0,
       sort: false,
-      sortValue: "asc",
+      sortStore: useSortStore(),
       store: useUserStore().$state,
       checkboxes: [
-        { label: "All inclusive" },
-        { label: "Śniadania" },
-        { label: "Śniadania i obiadokolacje" },
-        { label: "Brak" },
+        { label: "All inclusive", value: "All" },
+        { label: "Śniadania", value: "BB" },
+        { label: "Śniadania i obiadokolacje", value: "HB" },
+        { label: "Trzy Posiłki", value: "FB" },
+        { label: "Bez wyżywienia", value: "RO" },
+        { label: "Zgodnie z programem", value: "AI" },
       ],
-      selectedCheckboxes: [],
+      selectedCheckboxes: this.$route!.query.nutrition
+        ? (this.$route!.query.nutrition as string).split(",")
+        : [],
       query: {
         type: "all",
         destination: this.$route!.query.destination || "",
-        maxPrice: this.$route!.query.maxPrice || 1000,
-        stars: this.$route!.query.stars || "",
+        maxPrice: this.$route!.query.maxPrice || 1500,
+        stars: (this.$route!.query.stars as unknown as number) || 5,
         startDate: this.$route!.query.startDate || "",
         endDate: this.$route!.query.endDate || "",
         nutrition: this.$route!.query.nutrition || "",
@@ -351,10 +382,9 @@ export default {
       this.rangeValue = Number(target.value);
     },
     logRating(event: number) {
-      this.query.stars = event as unknown as string;
+      this.query.stars = event;
     },
     search() {
-      console.log(this.query);
       this.showContent = false;
       this.$router.push({
         path: "/home",
@@ -366,6 +396,7 @@ export default {
           startDate: this.query.startDate,
           endDate: this.query.endDate,
           nutrition: this.query.nutrition,
+          sort: this.sortStore.$state.sort,
         },
       });
     },
@@ -378,7 +409,7 @@ export default {
         type: "all",
         destination: "",
         maxPrice: "",
-        stars: "",
+        stars: 0,
         startDate: "",
         endDate: "",
         nutrition: "",
@@ -387,7 +418,20 @@ export default {
         path: "/home",
         query: {
           type: "all",
+          sort: this.sortStore.$state.sort,
         },
+      });
+    },
+    changeSort(type: ISort) {
+      this.sortStore.updateSort(type);
+
+      const query = Object.assign({}, this.$route.query);
+      query.sort = type;
+      this.sort = false;
+
+      this.$router.push({
+        path: "/home",
+        query: query,
       });
     },
   },

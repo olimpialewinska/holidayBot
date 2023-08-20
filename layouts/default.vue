@@ -39,6 +39,7 @@
             v-for="link in filteredNavLinks"
             :to="link.to"
             :key="link.to"
+            @click="toggleNavbar()"
           >
             <li class="nav-item">
               <div
@@ -125,7 +126,7 @@ export default {
         { to: "/", text: "Login", condition: !this.userLoggedIn },
         { to: "/register", text: "Register", condition: !this.userLoggedIn },
         {
-          to: "/home?type=preferred",
+          to: "/home?type=all",
           text: "Offers",
           condition: this.userLoggedIn,
         },

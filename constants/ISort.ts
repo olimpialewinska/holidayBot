@@ -1,3 +1,1 @@
-export interface ISort {
-  type: "asc" | "desc" | "stars";
-}
+export type ISort = "asc" | "desc" | "stars";
