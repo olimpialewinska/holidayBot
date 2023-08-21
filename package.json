@@ -23,6 +23,7 @@
     "nuxt-rating": "^0.0.15",
     "pinia": "^2.1.6",
     "tw-elements": "^1.0.0-beta3",
+    "vue-awesome-paginate": "^1.1.46",
     "vue3-toastify": "^0.1.12"
   }
 }

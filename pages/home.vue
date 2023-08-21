@@ -7,7 +7,10 @@
       class="flex flex-col justify-between gap-2 sm:gap-10 mb-6 mt-4 sm:flex-row w-11/12 sm:w-auto"
     >
       <NuxtLink
-        :to="{ path: '/home', query: { type: 'all', sort: sortStore.sort } }"
+        :to="{
+          path: '/home',
+          query: { type: 'all', sort: sortStore.sort, page: 1 },
+        }"
         class="btn-offer-type"
       >
         All Offers
@@ -15,7 +18,7 @@
       <NuxtLink
         :to="{
           path: '/home',
-          query: { type: 'preferred', sort: sortStore.sort },
+          query: { type: 'preferred', sort: sortStore.sort, page: 1 },
         }"
         class="btn-offer-type"
       >
@@ -190,9 +193,21 @@
           </div>
         </div>
       </div>
-      <div v-for="offer in searchResults" :key="offer.id">
+      <div class="flex flex-row justify-center my-4 dark:text-white text-black">
+        <vue-awesome-paginate
+          :total-items="totalPages"
+          :items-per-page="1"
+          :max-pages-shown="3"
+          v-model="currentPage"
+          :on-click="paginate"
+          :hide-prev-next="true"
+        />
+      </div>
+
+      <div v-for="offer in paginatedResults" :key="offer.id">
         <OfferItem :offer="offer" />
       </div>
+
       <div v-if="searchResults?.length === 0">
         <h1
           class="text-center text-zinc-600 dark:text-zinc-400 text-lg font-bold uppercase mt-10"
@@ -211,15 +226,18 @@ import { serverLink } from "../constants";
 import { IOffer } from "constants/IOffer";
 import { onMounted, ref } from "vue";
 import { reactive, watch } from "vue";
+
 definePageMeta({
   middleware: ["auth"],
 });
 
 const route = useRoute();
+const router = useRouter();
 const searchResults = ref<IOffer[] | null>([]);
 
 watch([() => route.query], ([query]) => {
   fetchSearchResults(query);
+  resetPageOnQueryChange();
 });
 
 const res = await fetch(`${serverLink}/preferences/data`, {
@@ -228,6 +246,16 @@ const res = await fetch(`${serverLink}/preferences/data`, {
     "Content-Type": "application/json",
   },
 });
+const currentPage = ref(route.query.page ? Number(route.query.page) : 1);
+const perPage = 20;
+const paginatedResults = computed(() => {
+  const startIndex = (currentPage.value - 1) * perPage;
+  const endIndex = startIndex + perPage;
+  return searchResults.value?.slice(startIndex, endIndex);
+});
+const totalPages = computed(() =>
+  Math.ceil(searchResults.value!.length / perPage)
+);
 
 const data = reactive(await res.json());
 
@@ -269,7 +297,6 @@ const fetchSearchResults = async (query: any) => {
       );
       searchResults.value = await response.json();
     } else {
-      console.log("get all offers");
       response = await fetch(
         `${serverLink}/preferences/getAllOffers?` +
           new URLSearchParams({
@@ -283,11 +310,25 @@ const fetchSearchResults = async (query: any) => {
           },
         }
       );
-      console.log(response);
+
       searchResults.value = await response.json();
     }
   } catch (error) {}
 };
+const resetPageOnQueryChange = () => {
+  currentPage.value = route.query.page ? Number(route.query.page) : 1;
+};
+
+function paginate(page: number) {
+  router.push({
+    path: "/home",
+    query: {
+      ...route.query,
+      page: page,
+    },
+  });
+  currentPage.value = page;
+}
 
 onMounted(() => {
   fetchSearchResults(route.query);
@@ -322,6 +363,7 @@ function updateLogoSrc() {
 
 <script lang="ts">
 import { ISort } from "constants/ISort";
+import { get } from "http";
 export default {
   data() {
     return {
@@ -438,4 +480,18 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+.pagination-container {
+  display: flex;
+  column-gap: 10px;
+}
+.active-page {
+  background-color: rgb(20 184 166);
+}
+.paginate-buttons {
+  height: 40px;
+  width: 40px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+</style>

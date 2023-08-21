@@ -33,4 +33,10 @@
   .checkbox-label-filter {
     @apply ml-2 text-sm font-medium;
   }
+  .paginate-buttons {
+    @apply bg-transparent hover:bg-teal-400 border-2 border-teal-400 dark:border-teal-900 dark:hover:bg-teal-900 dark:text-white text-black font-bold rounded-full transition-all duration-200 ease-in-out;
+  }
+  .active-page {
+    @apply bg-teal-500 text-white dark:bg-teal-800;
+  }
 }
