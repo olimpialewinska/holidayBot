@@ -193,6 +193,21 @@
           </div>
         </div>
       </div>
+
+      <div v-for="offer in paginatedResults" :key="offer.id">
+        <OfferItem :offer="offer" />
+      </div>
+      <div v-if="fetchError" class="text-center text-red-500 mt-4 text-lg">
+        An error occurred while loading data. Please try again later.
+      </div>
+
+      <div v-if="searchResults?.length === 0 && !fetchError">
+        <h1
+          class="text-center text-zinc-600 dark:text-zinc-400 text-lg font-bold uppercase mt-10"
+        >
+          No offers found
+        </h1>
+      </div>
       <div class="flex flex-row justify-center my-4 dark:text-white text-black">
         <vue-awesome-paginate
           :total-items="totalPages"
@@ -202,18 +217,6 @@
           :on-click="paginate"
           :hide-prev-next="true"
         />
-      </div>
-
-      <div v-for="offer in paginatedResults" :key="offer.id">
-        <OfferItem :offer="offer" />
-      </div>
-
-      <div v-if="searchResults?.length === 0">
-        <h1
-          class="text-center text-zinc-600 dark:text-zinc-400 text-lg font-bold uppercase mt-10"
-        >
-          No offers found
-        </h1>
       </div>
     </div>
   </div>
@@ -226,6 +229,7 @@ import { serverLink } from "../constants";
 import { IOffer } from "constants/IOffer";
 import { onMounted, ref } from "vue";
 import { reactive, watch } from "vue";
+const fetchError = ref(false);
 
 definePageMeta({
   middleware: ["auth"],
@@ -274,6 +278,9 @@ const fetchSearchResults = async (query: any) => {
           order: query.sort,
         }),
       });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
       searchResults.value = await response.json();
     } else if (query.type === "search") {
       response = await fetch(
@@ -295,6 +302,9 @@ const fetchSearchResults = async (query: any) => {
           },
         }
       );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
       searchResults.value = await response.json();
     } else {
       response = await fetch(
@@ -310,10 +320,15 @@ const fetchSearchResults = async (query: any) => {
           },
         }
       );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
 
       searchResults.value = await response.json();
     }
-  } catch (error) {}
+  } catch (error) {
+    fetchError.value = true;
+  }
 };
 const resetPageOnQueryChange = () => {
   currentPage.value = route.query.page ? Number(route.query.page) : 1;
