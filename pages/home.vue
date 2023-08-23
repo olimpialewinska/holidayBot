@@ -250,7 +250,7 @@ const res = await fetch(`${serverLink}/preferences/data`, {
     "Content-Type": "application/json",
   },
 });
-const currentPage = ref(route.query.page ? Number(route.query.page) : 1);
+const currentPage = ref(1);
 const perPage = 20;
 const paginatedResults = computed(() => {
   const startIndex = (currentPage.value - 1) * perPage;

@@ -1,25 +1,29 @@
 <template>
-  <div>
-    <div
-      id="sky"
-      class="fixed z-50 top-0 h-screen w-screen flex justify-center items-center"
-    >
-      <div
-        class="hidden flex-col items-center justify-center bg-gray-900 text-white w-screen h-screen md:flex"
-      >
-        <div id="stars" class="self-start z-30"></div>
-        <div id="stars2" class="self-start z-40"></div>
-        <div id="stars3" class="self-start z-20"></div>
-        <h1 class="font-mono text-white z-50 text-6xl">
-          {{ error.statusCode }} - Ooops... are you lost?
-        </h1>
-        <nuxt-link
-          to="/"
-          class="space cursor-pointer z-50 flex-col justify-center items-center flex pt-4 px-8 rounded-md text-purple-800 transform duration-150 ease-in hover:text-white hover:scale-105"
-        >
-          <button>xd</button>
-        </nuxt-link>
+  <div
+    id="sky"
+    class="fixed z-50 top-0 h-screen w-screen flex flex-col justify-center items-center font-mono"
+  >
+    <nuxt-picture
+      src="/hb-dark.png"
+      height="42"
+      width="200"
+      fit="cover"
+      alt="Logo"
+      class="absolute top-0 m-8"
+    />
+    <h1 class="text-white z-50 text-9xl">
+      {{ error.statusCode }}
+    </h1>
+    <div v-if="error.statusCode === 404">
+      <NuxtLink to="/">
+        <div class="btn">Go back home</div>
+      </NuxtLink>
+    </div>
+    <div v-if="error.statusCode !== 404">
+      <div class="text-white text-xl hover:text-gray-300 transition-all">
+        Something went wrong
       </div>
+      <button class="btn mt-4" @click="reload">Reload</button>
     </div>
   </div>
 </template>
@@ -27,6 +31,11 @@
 <script>
 export default {
   props: ["error"],
-  layout: "error", // you can set a custom layout for the error page
+  layout: "error",
+  methods: {
+    reload() {
+      window.location.reload();
+    },
+  },
 };
 </script>
