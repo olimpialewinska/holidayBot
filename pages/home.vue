@@ -208,7 +208,10 @@
           No offers found
         </h1>
       </div>
-      <div class="flex flex-row justify-center my-4 dark:text-white text-black">
+      <div
+        class="flex flex-row justify-center my-4 dark:text-white text-black"
+        v-if="!fetchError"
+      >
         <vue-awesome-paginate
           :total-items="totalPages"
           :items-per-page="1"
@@ -229,6 +232,7 @@ import { serverLink } from "../constants";
 import { IOffer } from "constants/IOffer";
 import { onMounted, ref } from "vue";
 import { reactive, watch } from "vue";
+
 const fetchError = ref(false);
 
 definePageMeta({
@@ -238,18 +242,40 @@ definePageMeta({
 const route = useRoute();
 const router = useRouter();
 const searchResults = ref<IOffer[] | null>([]);
+const data = reactive({
+  destinations: ["Malta", "Bułgaria", "Grecja", "Hiszpania", "Turcja", "Cypr"],
+  prices: {
+    minPrice: 0,
+    maxPrice: 1500,
+  },
+});
 
 watch([() => route.query], ([query]) => {
   fetchSearchResults(query);
   resetPageOnQueryChange();
 });
 
-const res = await fetch(`${serverLink}/preferences/data`, {
-  method: "GET",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+try {
+  const res = await fetch(`${serverLink}/preferences/data`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!res.ok) {
+    throw new Error("Network response was not ok");
+  }
+  const response = await res.json();
+  data.prices = response.prices;
+  data.destinations = response.destinations;
+} catch (error) {
+  data.destinations = [];
+  data.prices = {
+    minPrice: 0,
+    maxPrice: 1500,
+  };
+}
+
 const currentPage = ref(1);
 const perPage = 20;
 const paginatedResults = computed(() => {
@@ -257,14 +283,17 @@ const paginatedResults = computed(() => {
   const endIndex = startIndex + perPage;
   return searchResults.value?.slice(startIndex, endIndex);
 });
-const totalPages = computed(() =>
-  Math.ceil(searchResults.value!.length / perPage)
-);
-
-const data = reactive(await res.json());
+const totalPages = computed(() => {
+  if (searchResults.value) {
+    Math.ceil(searchResults.value.length / perPage);
+  } else {
+    0;
+  }
+});
 
 const fetchSearchResults = async (query: any) => {
   try {
+    fetchError.value = false;
     let response = null;
     if (query.type === "preferred") {
       response = await fetch(`${serverLink}/preferences/dedicatedOffers`, {
@@ -347,6 +376,7 @@ function paginate(page: number) {
 
 onMounted(() => {
   fetchSearchResults(route.query);
+  resetPageOnQueryChange();
 });
 
 const OfferItem = resolveComponent("OfferItem");
