@@ -99,13 +99,28 @@
             }"
           >
             <li @click="changeSort('asc')">
-              <div class="popup-item">Price: from the lowest</div>
+              <div
+                class="popup-item"
+                :class="sortStore.sort === 'asc' ? ' font-bold' : ''"
+              >
+                Price: from the lowest
+              </div>
             </li>
             <li @click="changeSort('desc')">
-              <div class="popup-item">Price: from the highest</div>
+              <div
+                class="popup-item"
+                :class="sortStore.sort === 'desc' ? ' font-bold' : ''"
+              >
+                Price: from the highest
+              </div>
             </li>
             <li @click="changeSort('stars')">
-              <div class="popup-item">Highest rating</div>
+              <div
+                class="popup-item"
+                :class="sortStore.sort === 'stars' ? ' font-bold' : ''"
+              >
+                Highest rating
+              </div>
             </li>
           </ul>
         </div>
@@ -284,11 +299,10 @@ const paginatedResults = computed(() => {
   return searchResults.value?.slice(startIndex, endIndex);
 });
 const totalPages = computed(() => {
-  if (searchResults.value) {
-    Math.ceil(searchResults.value.length / perPage);
-  } else {
-    0;
+  if (!searchResults.value) {
+    return 0;
   }
+  return Math.ceil(searchResults.value.length / perPage);
 });
 
 const fetchSearchResults = async (query: any) => {
@@ -372,6 +386,7 @@ function paginate(page: number) {
     },
   });
   currentPage.value = page;
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 onMounted(() => {

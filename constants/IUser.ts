@@ -3,8 +3,8 @@ export interface IUser {
   email: string | null;
   accessToken: string | null;
   preferences: {
-    destination: string;
-    mealType: string;
+    destination: string[];
+    mealType: string[];
     duration: number;
     rating: number;
     price: number;

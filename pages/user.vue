@@ -1,5 +1,11 @@
 <template>
   <div>
+    <Modal
+      :close="close"
+      :is-open="open"
+      :set-Countries="setCountries"
+      :selected-Countries="destinations"
+    />
     <div
       class="container px-2 mx-auto flex-col flex items-center w-screen"
       style="margin-bottom: 20px"
@@ -65,67 +71,82 @@
             <div class="flex flex-col justify-center items-center py-4">
               <h1 class="text-2xl uppercase font-bold">Preferences</h1>
               <form class="w-10/12 mt-4">
-                <label for="countries" class="form-label"
-                  >Select a destination:</label
+                <label for="countries" class="btn" @click="openModal"
+                  >Select a destination</label
                 >
-                <select id="countries" class="input">
-                  <option v-for="country in countries" :key="country">
-                    {{ country }}
-                  </option>
-                </select>
                 <label for="countries" class="form-label mt-4"
                   >Choose the type of nutrition:
                 </label>
                 <div class="flex items-center mb-2">
-                  <input type="checkbox" value="" class="checkbox" />
+                  <input
+                    type="checkbox"
+                    value="All"
+                    class="checkbox"
+                    v-model="nutrition"
+                  />
                   <label for="default-checkbox" class="checkbox-label"
-                    >Default checkbox</label
+                    >ALL INCLUSIVE</label
                   >
                 </div>
                 <div class="flex items-center mb-2">
-                  <input type="checkbox" value="" class="checkbox" />
+                  <input
+                    type="checkbox"
+                    value="HB"
+                    class="checkbox"
+                    v-model="nutrition"
+                  />
                   <label for="checked-checkbox" class="checkbox-label"
-                    >Checked state</label
+                    >Dwa Posiłki</label
                   >
                 </div>
                 <div class="flex items-center mb-2">
-                  <input type="checkbox" value="" class="checkbox" />
+                  <input
+                    type="checkbox"
+                    value="BB"
+                    class="checkbox"
+                    v-model="nutrition"
+                  />
                   <label for="default-checkbox" class="checkbox-label"
-                    >Default checkbox</label
+                    >Kolacja</label
                   >
                 </div>
                 <div class="flex items-center mb-2">
-                  <input type="checkbox" value="" class="checkbox" />
+                  <input
+                    type="checkbox"
+                    value="FB"
+                    class="checkbox"
+                    v-model="nutrition"
+                  />
                   <label for="checked-checkbox" class="checkbox-label"
-                    >Checked state</label
+                    >Trzy posiłki</label
                   >
                 </div>
                 <div class="flex items-center mb-2">
-                  <input type="checkbox" value="" class="checkbox" />
+                  <input
+                    type="checkbox"
+                    value="RO"
+                    class="checkbox"
+                    v-model="nutrition"
+                  />
                   <label for="default-checkbox" class="checkbox-label"
-                    >Default checkbox</label
-                  >
-                </div>
-                <div class="flex items-center mb-2">
-                  <input type="checkbox" value="" class="checkbox" />
-                  <label for="checked-checkbox" class="checkbox-label"
-                    >Checked state</label
+                    >Brak</label
                   >
                 </div>
                 <label for="countries" class="form-label mt-4"
                   >Choose the length of your trip:</label
                 >
-                <select id="duration" class="input">
-                  <option v-for="country in countries" :key="country">
-                    {{ country }}
-                  </option>
+                <select id="duration" class="input" v-model="duration">
+                  <option value="3">1-3 dni</option>
+                  <option value="7">4-7 dni</option>
+                  <option value="14">8-14 dni</option>
+                  <option value="21">15-21 dni</option>
                 </select>
                 <label for="countries" class="form-label mt-4"
                   >Select the number of stars for the hotel:</label
                 >
                 <NuxtRating
                   :read-only="false"
-                  :ratingValue="store.preferences?.rating"
+                  :ratingValue="rating"
                   @rating-selected="logRating"
                 />
                 <label for="countries" class="form-label mt-4"
@@ -137,23 +158,14 @@
                     type="range"
                     min="0"
                     max="5000"
-                    :value="store.preferences?.price"
+                    :value="rangeValue"
                     class="w-full"
                     @change="updateValue($event)"
                     @input="updateValue($event)"
                   />
-                  <datalist id="tickmarks">
-                    <option value="0" label="0" />
-                    <option value="1000" />
-                    <option value="2000" />
-                    <option :value="store.preferences?.price" selected />
-                    <option value="3000" />
-                    <option value="4000" />
-                    <option value="5000" label="5000" />
-                  </datalist>
                 </div>
 
-                <button class="btn">Save preferences</button>
+                <div class="btn" @click="sendData">Save preferences</div>
               </form>
             </div>
           </div>
@@ -164,7 +176,8 @@
 </template>
 
 <script setup lang="ts">
-import { countries } from "../constants";
+import axios from "axios";
+import { countries, serverLink } from "../constants";
 import { useUserStore } from "../stores/userstore";
 definePageMeta({
   middleware: ["auth"],
@@ -191,11 +204,16 @@ export default {
       email: useUserStore().email,
       password: "",
       confirmPassword: "",
+      open: false,
+      destinations: useUserStore().preferences?.destination ?? [],
+      nutrition: useUserStore().preferences?.mealType ?? [],
+      rating: useUserStore().preferences?.rating ?? 1,
+      duration: useUserStore().preferences?.duration ?? 3,
     };
   },
   methods: {
     logRating(event: number) {
-      console.log(event);
+      this.rating = event;
     },
     updateValue(event: Event) {
       const target = event.target as HTMLInputElement;
@@ -206,6 +224,48 @@ export default {
     },
     updateAccountData() {
       console.log("account data updated");
+    },
+    setCountries(countries: Array<string>) {
+      this.destinations = countries;
+    },
+    close() {
+      this.open = false;
+    },
+    openModal() {
+      console.log("xd");
+      this.open = true;
+    },
+    notify(message: string, type: string) {
+      if (type === "success") {
+        return this.$toast.success(message);
+      }
+      useNuxtApp().$toast.error(message);
+    },
+    async sendData() {
+      const data = {
+        email: this.email,
+        preferences: {
+          destination: this.destinations,
+          mealType: this.nutrition,
+          rating: this.rating,
+          duration: this.duration,
+          price: this.rangeValue,
+        },
+      };
+      const response = await axios.post(
+        `${serverLink}/preferences/addPreferences`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + useUserStore().$state.accessToken,
+          },
+          data: data,
+        }
+      );
+      if (response.data.error) {
+        return this.notify("Something went wrong", "error");
+      }
+      this.notify("Preferences saved", "success");
     },
   },
   computed: {
