@@ -7,6 +7,6 @@ export interface IUser {
     mealType: string[];
     duration: number;
     rating: number;
-    price: number;
+    pricePerPerson: number;
   } | null;
 }

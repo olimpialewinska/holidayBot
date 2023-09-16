@@ -185,6 +185,8 @@ definePageMeta({
 
 const store = useUserStore();
 
+console.log(useUserStore().preferences);
+
 useHead({
   title: "HolidayBot - User Dashboard",
   meta: [
@@ -200,7 +202,7 @@ useHead({
 export default {
   data() {
     return {
-      rangeValue: useUserStore().preferences?.price,
+      rangeValue: useUserStore().preferences?.pricePerPerson ?? 0,
       email: useUserStore().email,
       password: "",
       confirmPassword: "",
@@ -249,9 +251,10 @@ export default {
           mealType: this.nutrition,
           rating: this.rating,
           duration: this.duration,
-          price: this.rangeValue,
+          pricePerPerson: this.rangeValue,
         },
       };
+      console.log(data);
       const response = await axios.post(
         `${serverLink}/preferences/addPreferences`,
         {
@@ -266,6 +269,7 @@ export default {
         return this.notify("Something went wrong", "error");
       }
       this.notify("Preferences saved", "success");
+      useUserStore().updatePreferences(response.data);
     },
   },
   computed: {

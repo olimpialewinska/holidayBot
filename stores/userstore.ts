@@ -21,5 +21,8 @@ export const useUserStore = defineStore("user", {
         preferences: null,
       });
     },
+    updatePreferences(preferences: IUser["preferences"] | null) {
+      this.preferences = preferences;
+    },
   },
 });
