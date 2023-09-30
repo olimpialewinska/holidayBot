@@ -10,9 +10,12 @@ The Holiday Scrapper frontend is designed to work in conjunction with the Holida
 
 ## UI
 <p align="center">
-<img width="400" alt="UI-light" src="https://github.com/olimpialewinska/holidayBot/assets/100933608/2cce6984-fb87-4b21-b0b5-21f6bd86af48">
-<img width="400" alt="UI-dark" src="https://github.com/olimpialewinska/holidayBot/assets/100933608/481aec95-b143-4748-a977-7cfe086ee667">
+<img width="400" alt="UI-light" src="https://github.com/olimpialewinska/holidayBot/assets/100933608/1ebc3de6-cff9-4599-a219-cf7ee443a1ee"/>
+<img width="400" alt="UI-dark" src="https://github.com/olimpialewinska/holidayBot/assets/100933608/c0ca28cf-d916-4cea-a5b8-a52d3c15cd57"/>
+<img width="400" alt="Dashboard" src="https://github.com/olimpialewinska/holidayBot/assets/100933608/f060b415-b315-40f0-907e-27d34bd1d0cf">
+
 </p>
+
 
 
 ## Getting Started
